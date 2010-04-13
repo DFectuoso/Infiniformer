@@ -9,18 +9,9 @@ Player player;
 bool done = false;    
 bool fullscreen = false;
 enum { STATE_MENU=0, STATE_ABOUT=1, STATE_GAME=2 };
-int screenState, gameState;
-BITMAP *bmpPlayer;
+int screenState, gameState, menuPointer;
+BITMAP *bmpPlayer, *bmpMenu, *bmpAbout;
 int textColor = makecol(256,100,256);
-
-//Function to make the screen back
-//TODO: Remove after doing the menu and about, should not be used after that
-void makeScreenBlack() {
-  //clear the screen to black
-  //without this next line, the game "smears"
-  //comment it out to try it!
-  clear_to_color(screenBuffer, makecol(0,0,0));
-}
 
 //Call the init, set the menu, load the bitmap of the player
 //TODO: MAKE THE images be owned by the player and them
@@ -29,14 +20,21 @@ void gameSetup(){
   screenState = STATE_MENU;   
   levelMap.init();  
   bmpPlayer = load_bitmap("robo.bmp",NULL);
+  bmpMenu = load_bitmap("infiniformer.bmp",NULL);
+  bmpAbout= load_bitmap("about.bmp",NULL);
 }
 
 void drawMenu(){
-  textprintf_ex(screenBuffer, font, 10, 10, makecol(255, 100, 200), -1, "You are in the Menu, press 1 to go to the game, 2 to see the about and 3 to exit");
+  masked_blit(bmpMenu, screenBuffer,0,0,0,0,800,600);
+  textprintf_ex(screenBuffer, font, 310, 400,  makecol(0, 0, 0), -1, "Pick an option:");
+  textprintf_ex(screenBuffer, font, 330, 415,  makecol(0, 0, 0), -1, "Start game");
+  textprintf_ex(screenBuffer, font, 330, 430,  makecol(0, 0, 0), -1, "About");
+  textprintf_ex(screenBuffer, font, 330, 445,  makecol(0, 0, 0), -1, "Exit");
+  textprintf_ex(screenBuffer, font, 315, 415 + (menuPointer * 15), makecol(0,0,0), -1, ">");
 }
 
 void drawAbout(){
-  textprintf_ex(screenBuffer, font, 10, 10, makecol(255, 100, 200), -1, "This game was made by someone, press esc to go back to the menu");
+  masked_blit(bmpAbout, screenBuffer,0,0,0,0,800,600);
 }
 
 void drawGame(){
@@ -49,7 +47,6 @@ void drawGame(){
 
 //This function selects what draw to call
 void drawingThings(){
-  makeScreenBlack();
   if(screenState == STATE_MENU){
     drawMenu(); 
   }  
@@ -62,12 +59,35 @@ void drawingThings(){
 }
 
 //Make this a nice Select list
+bool removeMenuBounce = true;
 void receiveMenuInput(){
-  if (key[KEY_1]) { 
-    screenState = STATE_GAME;
-  } else if (key[KEY_2]) {  
-    screenState = STATE_ABOUT;
-  } else if (key[KEY_3]) { done = true;}                     //Quit
+
+  if(key[KEY_UP] && removeMenuBounce){
+    removeMenuBounce = false;
+    menuPointer = menuPointer - 1;
+  } else if(key[KEY_DOWN] && removeMenuBounce) {
+    removeMenuBounce = false;
+    menuPointer = menuPointer + 1;
+  }
+  if(menuPointer < 0) {
+    menuPointer = 2;
+  }
+  if(menuPointer > 2){
+    menuPointer = 0;
+  }
+  if(!key[KEY_UP] && !key[KEY_DOWN]){
+    removeMenuBounce = true;
+  }
+
+  if(key[KEY_ENTER]){
+    if(menuPointer == 0){
+      screenState = STATE_GAME;
+    } else if(menuPointer == 1){
+      screenState = STATE_ABOUT;
+    } else {
+      done = true;
+    }
+  }
 }
 
 void receiveAboutInput(){
