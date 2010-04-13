@@ -15,7 +15,6 @@ int textColor = makecol(256,100,256);
 
 //Call the init, set the menu, load the bitmap of the player
 //TODO: MAKE THE images be owned by the player and them
-//TODO: MAKE sure to dispose of the images
 void gameSetup(){
   screenState = STATE_MENU;   
   levelMap.init();  
@@ -188,6 +187,9 @@ int main(){
     }
     drawingThings();
     updateScreen();
-    }
+  }
+  destroy_bitmap(bmpPlayer);
+  destroy_bitmap(bmpMenu);
+  destroy_bitmap(bmpAbout);
   return 0;
 } END_OF_MAIN()
