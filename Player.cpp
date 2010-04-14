@@ -10,6 +10,14 @@ Player::Player() {
 
 Player::~Player() { }
 
+void Player::loadImage() {
+  bmpPlayer = load_bitmap("robo.bmp",NULL);
+}
+
+void Player::unloadImage() {
+  destroy_bitmap(bmpPlayer);
+}
+
 //Real init, sets the player not jumping, not sliding, height, width, acelY, and position
 void Player::reset(){
   speed = STEP; 
@@ -19,7 +27,6 @@ void Player::reset(){
   x = 10; 
   y = HEIGHT/2 - TILEH/2;
   acelY = ACEL;
-  weight = 10;
   jumping = false;
   sliding = false;
   width = 64;
@@ -163,7 +170,7 @@ void Player::applyGravity(LevelMap* map){
 
 //Paint the player.
 //TODO: Make a function to know what state to paint, leave 2 lines here, call to the function and paint
-void Player::draw(BITMAP *buffer, BITMAP *bmpAlec, int mapX, int mapY) {
+void Player::draw(BITMAP *buffer, int mapX, int mapY) {
   int frame = 0;
   delayTimer++;
   if(delayTimer > ANIMDELAY){
@@ -188,6 +195,6 @@ void Player::draw(BITMAP *buffer, BITMAP *bmpAlec, int mapX, int mapY) {
   }
   int xFrame = (frame % 10) * 64;
   int yFrame = (frame / 10) * 64;
-  masked_blit(bmpAlec,buffer,xFrame,yFrame,x-mapX,y-mapY,64,64);
+  masked_blit(bmpPlayer,buffer,xFrame,yFrame,x-mapX,y-mapY,64,64);
 //  masked_blit(bmpAlec, buffer, delta,0, x - mapX, y - mapY,64,64); 
 }

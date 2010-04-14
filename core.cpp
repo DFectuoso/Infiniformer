@@ -30,3 +30,4 @@ void techInit(){
 void updateScreen() {
      blit(screenBuffer, screen, 0, 0, 0, 0, WIDTH, HEIGHT);
 }
+

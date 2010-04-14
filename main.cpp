@@ -10,15 +10,15 @@ bool done = false;
 bool fullscreen = false;
 enum { STATE_MENU=0, STATE_ABOUT=1, STATE_GAME=2 };
 int screenState, gameState, menuPointer;
-BITMAP *bmpPlayer, *bmpMenu, *bmpAbout;
+BITMAP *bmpMenu, *bmpAbout;
 int textColor = makecol(256,100,256);
 
 //Call the init, set the menu, load the bitmap of the player
-//TODO: MAKE THE images be owned by the player and them
+//TODO: MAKE the user image be owned by the player 
 void gameSetup(){
   screenState = STATE_MENU;   
   levelMap.init();  
-  bmpPlayer = load_bitmap("robo.bmp",NULL);
+  player.loadImage();
   bmpMenu = load_bitmap("infiniformer.bmp",NULL);
   bmpAbout= load_bitmap("about.bmp",NULL);
 }
@@ -38,7 +38,7 @@ void drawAbout(){
 
 void drawGame(){
   levelMap.draw();
-  player.draw(screenBuffer, bmpPlayer, levelMap.x, levelMap.y);
+  player.draw(screenBuffer, levelMap.x, levelMap.y);
   bool asd = levelMap.die(player.X(),player.Y(), player.width, player.height);  
   textprintf_ex(screenBuffer, font, 10, 10, textColor, -1, "press esc to go to the menu, ESTAS Jumping: %s y estas Sliding: %s", (player.jumping)?"JUMP":"NO",(player.sliding)?"SI":"NO");   
 //  textprintf_ex(screenBuffer, font, 10, 10, textColor, -1, "press esc to go to the menu, ESTAS DEAD");   
@@ -188,8 +188,8 @@ int main(){
     drawingThings();
     updateScreen();
   }
-  destroy_bitmap(bmpPlayer);
   destroy_bitmap(bmpMenu);
   destroy_bitmap(bmpAbout);
+  player.unloadImage();
   return 0;
 } END_OF_MAIN()
